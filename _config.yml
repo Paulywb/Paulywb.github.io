@@ -10,7 +10,7 @@ description: N37
 # baseurl: "" # the subpath of your site, e.g. /blog/
 # url: "http://yourdomain.com" # the base hostname & protocol for your site
 # twitter_username: jekyllrb
-github_username:  Paul
+github_username:  
 permalink: /:year/:month/:day/:title/
 
 # Build settings
