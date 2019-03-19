@@ -1,0 +1,81 @@
+	今日小技巧:
+cisco交换机破解密码或恢复出厂设置、注:恢复出厂设置只需要操作到第6步或第7步
+1、拔下交换机电源线
+2、用手按在交换的MODE按键上，插上电源线
+3、看到控制台后，松开MODE键
+4、在里执行“flash-init”命令
+switch: flash-init
+5、查看flash文件,在switch：dir flash：，把“config.text”文件改为“config.old”
+switch：rename flash:config.text  flash:config.old
+6、重启交换机，
+switch：boot
+7、交换机出现是否配置的对话，选择”no“命令
+8、进入特权模式查看flash文件。把文件“config.old”改为“config.text”
+switch>enable
+switch#rename flash:config.old  flash:config.text
+9、把“config.text”考入系统的”running-config“
+switch#copy flash:config.text system:running-config
+10、重新设置密码，并保存
+copy  run  start
+
+
+
+2019.3.19:
+
+	今日小技巧:
+使用fpm制作rpm包
+安装如下
+[root@web01 ~]# yum install -y gcc zlib zlib-devel
+wget http://ruby.taobao.org/mirrors/ruby/ruby-1.8.7-p358.tar.gz
+wget http://files.rubyforge.vm.bytemark.co.uk/rubygems/rubygems-1.8.24.tgz
+wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm 
+rpm -ivh epel-release-6-8.noarch.rpm 
+yum -y install rpm-build
+tar xf ruby-1.8.7-p358.tar.gz
+tar xf rubygems-1.8.24.tgz 
+cd ruby-1.8.7-p358
+./configure --enable-pthread
+make && make install
+cd ../rubygems-1.8.24
+ruby setup.rb 
+cd ..
+gem source -r http://rubygems.org/
+gem source -a http://ruby.taobao.org/
+gem sources -l
+*** CURRENT SOURCES ***
+
+http://ruby.taobao.org/
+
+gem install fpm
+
+
+
+# 制作rpm包, 需要提前编译好源码,这里是将整个目录打包成rpm包的
+fpm -s dir -t rpm -v 5.5.39 -n MySQL -p /root/fpm/RPMS/x86_64/ --license GPL --verdor mysql -m rg_fan@163.com --url http://mysql.com --description "mysql databases" --post-install /root/fpm/scripts/mysql-post-install.sh --pre-uninstall /root/fpm/scripts/mysql-pre-uninstall.sh --rpm-user mysql --rpm-group mysql --rpm-changelog /root/fpm/changelog/MySQL.log /usr/local/mysql/
+
+
+# 帮助信息
+-n 生成的package名字
+-p 生成的package文件输出位置
+-v 生成的package版本
+-d, --depends 生成的package依赖于什么软件,通常为-d 'name' 或这 -d 'name > version'
+-a 系统架构名称,如果是noarch则为'-a all' 或者 '-a native'
+--license  许可证
+--vendor   
+-m, --maintainer   制作人员 默认为 <用户@主机名>
+--url  
+--description 软件包描述
+--iteration  指定rpn包的制作版本号等信息 跟spec文件的Release 一样 1.el6
+--config-files  配置文件
+--conflicts 与其他什么软件冲突
+--post-install
+--pre-install
+--pre-uninstall
+--post-uninstall
+--rpm-user  安装后的目录或文件的属主,spec文件里面的%file段里面的用户
+--rpm-group  安装后的目录或文件的属组,spec文件里面的%file段里面的组
+--rpm-defattrfile   安装之后的文件权限 
+--rpm-defattrdir   安装之后的目录权限
+--rpm-compression  rpm的压缩算法 none xz bzip2 gzip
+--rpm-changelog     changelog文件
+
